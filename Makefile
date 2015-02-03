@@ -1,9 +1,16 @@
 CPP=g++
+CPPFILES=main.cpp
+OBJFILES=main.o
+OUTFILE=ipmanage
 
-all: main
+all: $(OUTFILE)
 
-main: main.cpp
-	$(CPP) main.cpp -o main
+$(OUTFILE): $(OBJFILES)
+	$(CPP) $(OBJFILES) -o $(OUTFILE)
+
+$(%.o): $(%.cpp)
+	$(CPP) -c $< -o $@
 
 clean:
-	rm main
+	rm *.o
+	rm $(OUTFILE)
