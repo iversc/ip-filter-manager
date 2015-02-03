@@ -14,12 +14,17 @@ template <typename T>
      return ss.str();
   }
 
-int main()
+int main(int argc, char ** argv)
 {
     ipList * list = NULL;
     string line;
     string toShow;
-    ifstream myfile("/var/log/iptables.log");
+    string fileName = "/var/log/iptables.log";
+    if(argc == 2)
+    {
+        fileName = fileName + "." +string(argv[1]);
+    }
+    ifstream myfile(fileName.c_str());
     int lineCount = 0;
     int srcPos = 0;
     int srcEnd = 0;
