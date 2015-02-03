@@ -7,7 +7,7 @@
 using namespace std;
 
 ipList * list = NULL;
-void addToList(string IP);
+void addToList(string IP, dateTime * dt);
 
 template <typename T>
   string NumberToString ( T Number )
@@ -45,7 +45,13 @@ int main(int argc, char ** argv)
                 {
                     //Offset by 4 to get rid of SRC=
                     toShow = line.substr(srcPos + 4, srcEnd-srcPos - 4);
-                    addToList(toShow);
+                    dateTime * dt = new dateTime;
+                    dt->date = "N/A";
+                    dt->time = "N/A";
+
+                    dt->date = line.substr(0, 6);
+                    dt->time = line.substr(7, 8);
+                    addToList(toShow, dt);
                 }
             }
 
@@ -54,12 +60,17 @@ int main(int argc, char ** argv)
         }
 
         myfile.close();
-        cout << "Entries: " << lineCount << endl;
+        cout << "Entries: " << lineCount << endl << endl;
 
         ipList * curList =  list;
         while(curList != NULL)
         {
             cout << curList->IP << ": " << curList->count << endl;
+            cout << "\t" << "First: " << curList->first->date << " " 
+                << curList->first->time << endl;
+            cout << "\t" << "Last: " << curList->last->date << " " 
+                << curList->last->time << endl << endl;
+            
             curList = curList->next;
         }
     }
@@ -71,30 +82,34 @@ int main(int argc, char ** argv)
     return 0;
 }
 
-void addToList(string IP)
+void addToList(string IP, dateTime * dt)
 {
     ipList * curList = list;
     ipList * lastItem = NULL;
-    
+
     while(curList != NULL)
     {
         if(curList->IP == IP)
         {
             curList->count++;
+            if(curList->first != curList ->last) delete curList->last;
+            curList->last = dt;
             break;
         }
-        
+
         lastItem = curList;
         curList = curList->next;
     }
-    
+
     if(curList == NULL)
     {
         ipList * newItem = new ipList;
         newItem->IP = IP;
         newItem->count = 1;
         newItem->next = NULL;
-        
+        newItem->first = dt;
+        newItem->last = dt;
+
         if(lastItem==NULL)
         {
             list = newItem;
@@ -103,9 +118,9 @@ void addToList(string IP)
         {
             lastItem->next = newItem;
         }
-            
+
     }
 
-    
+
 }
 
