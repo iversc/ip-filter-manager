@@ -6,6 +6,9 @@
 
 using namespace std;
 
+ipList * list = NULL;
+void addToList(string IP);
+
 template <typename T>
   string NumberToString ( T Number )
   {
@@ -16,18 +19,19 @@ template <typename T>
 
 int main(int argc, char ** argv)
 {
-    ipList * list = NULL;
     string line;
     string toShow;
     string fileName = "/var/log/iptables.log";
+    
     if(argc == 2)
     {
         fileName = fileName + "." +string(argv[1]);
     }
+    
     ifstream myfile(fileName.c_str());
     int lineCount = 0;
-    int srcPos = 0;
-    int srcEnd = 0;
+    unsigned int srcPos = 0;
+    unsigned int srcEnd = 0;
     if(myfile.is_open())
     {
         while(getline(myfile, line))
@@ -41,39 +45,7 @@ int main(int argc, char ** argv)
                 {
                     //Offset by 4 to get rid of SRC=
                     toShow = line.substr(srcPos + 4, srcEnd-srcPos - 4);
-                    ipList * curList = list;
-                    ipList * lastItem = NULL;
-                    
-                    while(curList != NULL)
-                    {
-                        if(curList->IP == toShow)
-                        {
-                            curList->count++;
-                            break;
-                        }
-                        
-                        lastItem = curList;
-                        curList = curList->next;
-                    }
-                    
-                    if(curList == NULL)
-                    {
-                        ipList * newItem = new ipList;
-                        newItem->IP = toShow;
-                        newItem->count = 1;
-                        newItem->next = NULL;
-                        
-                        if(lastItem==NULL)
-                        {
-                            list = newItem;
-                        }
-                        else
-                        {
-                            lastItem->next = newItem;
-                        }
-                            
-                    }
-
+                    addToList(toShow);
                 }
             }
 
@@ -91,10 +63,49 @@ int main(int argc, char ** argv)
             curList = curList->next;
         }
     }
-    else
+    else //if(myfile.isopen())
     {
         cout << "Unable to open file.\n";
     }
 
     return 0;
 }
+
+void addToList(string IP)
+{
+    ipList * curList = list;
+    ipList * lastItem = NULL;
+    
+    while(curList != NULL)
+    {
+        if(curList->IP == IP)
+        {
+            curList->count++;
+            break;
+        }
+        
+        lastItem = curList;
+        curList = curList->next;
+    }
+    
+    if(curList == NULL)
+    {
+        ipList * newItem = new ipList;
+        newItem->IP = IP;
+        newItem->count = 1;
+        newItem->next = NULL;
+        
+        if(lastItem==NULL)
+        {
+            list = newItem;
+        }
+        else
+        {
+            lastItem->next = newItem;
+        }
+            
+    }
+
+    
+}
+

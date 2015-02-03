@@ -2,14 +2,15 @@ CPP=g++
 CPPFILES=main.cpp
 OBJFILES=main.o
 OUTFILE=ipmanage
+CPPFLAGS=-Wall
 
 all: $(OUTFILE)
 
 $(OUTFILE): $(OBJFILES)
-	$(CPP) $(OBJFILES) -o $(OUTFILE)
+	$(CPP) $(CPPFLAGS) $(OBJFILES) -o $(OUTFILE)
 
 $(%.o): $(%.cpp)
-	$(CPP) -c $< -o $@
+	$(CPP) $(CPPFLAGS) -c $< -o $@
 
 clean:
 	rm *.o
