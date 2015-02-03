@@ -19,7 +19,7 @@ int main()
     ipList * list = NULL;
     string line;
     string toShow;
-    ifstream myfile("/var/log/iptables.log.1");
+    ifstream myfile("/var/log/iptables.log");
     int lineCount = 0;
     int srcPos = 0;
     int srcEnd = 0;
@@ -36,35 +36,39 @@ int main()
                 {
                     //Offset by 4 to get rid of SRC=
                     toShow = line.substr(srcPos + 4, srcEnd-srcPos - 4);
-                    if(list == NULL)
+                    ipList * curList = list;
+                    ipList * lastItem = NULL;
+                    
+                    while(curList != NULL)
                     {
-                        list = new ipList;
-                        list->IP = toShow;
-                        list->count = 1;
-                        list->next = NULL;
-                    }
-                    else
-                    {
-                        ipList * curList = list;
-                        while(curList->IP != toShow)
+                        if(curList->IP == toShow)
                         {
-                            if(curList->next == NULL)
-                            {
-                                ipList * newItem = new ipList;
-                                newItem->IP = toShow;
-                                newItem->count = 0;
-                                newItem->next = NULL;
-                                curList->next = newItem;
-                                curList = newItem;
-                            }
-                            else
-                            {
-                                curList = curList->next;
-                            }
+                            curList->count++;
+                            break;
                         }
-
-                        curList->count++;
+                        
+                        lastItem = curList;
+                        curList = curList->next;
                     }
+                    
+                    if(curList == NULL)
+                    {
+                        ipList * newItem = new ipList;
+                        newItem->IP = toShow;
+                        newItem->count = 1;
+                        newItem->next = NULL;
+                        
+                        if(lastItem==NULL)
+                        {
+                            list = newItem;
+                        }
+                        else
+                        {
+                            lastItem->next = newItem;
+                        }
+                            
+                    }
+
                 }
             }
 
