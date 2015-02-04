@@ -2,12 +2,19 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <locale>
 #include "ipList.h"
 
 using namespace std;
 
 ipList * list = NULL;
+ipList ** ipArr = NULL;
+unsigned int IPcount = 0;
+
+
 void addToList(string IP, dateTime * dt);
+void mainMenu();
+void convertToArray();
 
 template <typename T>
   string NumberToString ( T Number )
@@ -73,6 +80,8 @@ int main(int argc, char ** argv)
             
             curList = curList->next;
         }
+        convertToArray();
+        mainMenu();
     }
     else //if(myfile.isopen())
     {
@@ -80,6 +89,30 @@ int main(int argc, char ** argv)
     }
 
     return 0;
+}
+
+void mainMenu()
+{
+    string sel;
+    locale loc;
+    while (sel != "q" && sel != "Q")
+    {
+        cout << "Make a selection. >";
+        cin >> sel;
+    }
+}
+
+void convertToArray()
+{
+    ipArr = new ipList*[IPcount];
+    ipList * curList = list;
+    for(unsigned int x = 0; x < IPcount; x++)
+    {
+        ipArr[x] = curList;
+        curList = curList->next;
+    }
+    
+    
 }
 
 void addToList(string IP, dateTime * dt)
@@ -103,6 +136,7 @@ void addToList(string IP, dateTime * dt)
 
     if(curList == NULL)
     {
+        IPcount++;
         ipList * newItem = new ipList;
         newItem->IP = IP;
         newItem->count = 1;
@@ -120,7 +154,5 @@ void addToList(string IP, dateTime * dt)
         }
 
     }
-
-
 }
 
