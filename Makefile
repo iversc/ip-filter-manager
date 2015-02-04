@@ -15,3 +15,6 @@ $(%.o): $(%.cpp)
 clean:
 	rm *.o
 	rm $(OUTFILE)
+
+install: all
+	cp $(OUTFILE) ~/getcount
