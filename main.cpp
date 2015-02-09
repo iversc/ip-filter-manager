@@ -103,7 +103,8 @@ void mainMenu()
 
     while (sel != "q" && sel != "Q")
     {
-        printArray(page);
+        printArray(page * 10);
+        cout << endl;
         if( (IPcount > 10) && ((page * 10) + 10 < IPcount) )
         {
             cout << "n - Next page" << endl;
@@ -116,6 +117,34 @@ void mainMenu()
         cout << "q - Quit" << endl << endl;
         cout << "Make a selection. >";
         cin >> sel;
+        
+        if(sel == "p" && page > 0)
+        {
+            page--;
+        }
+        else if(sel == "n" && ((page * 10) + 10 < IPcount) )
+        {
+            page++;
+        }
+        else if(sel == "q")
+        {
+            break;
+        }
+        else
+        {
+            stringstream convert(sel);
+            unsigned int selected = 0;
+            convert >> selected;
+            selected = (page * 10) + selected;
+            if (! (selected >= IPcount))
+            {
+                cout << "Selected IP: " << ipArr[selected]->IP << endl; 
+            }
+            else
+            {
+                cout << "Invalid selection." << endl;
+            }
+        }
     }
 }
 
@@ -123,9 +152,9 @@ void printArray(unsigned int start)
 {
     for(unsigned int x = start; x < start + 10 && x < IPcount; x++)
     {
-        cout << x << " - " << ipArr[x]->IP << ": " << ipArr[x]->count << endl
-            << "\t" << "First: " << ipArr[x]->first->date << " " << ipArr[x]->first->time << endl
-            << "\t" << "Last: " << ipArr[x]->last->date << " " << ipArr[x]->last->time << endl
+        cout << (x - start) << " - " << ipArr[x]->IP << ": " << ipArr[x]->count //<< endl
+            << "\t" << "First: " << ipArr[x]->first->date << " " << ipArr[x]->first->time //<< endl
+            << "\t" << "Last: " << ipArr[x]->last->date << " " << ipArr[x]->last->time //<< endl
             << endl;
     }
 }
