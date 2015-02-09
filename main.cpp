@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 #include <locale>
+#include <stdlib.h>
 #include "ipList.h"
 
 using namespace std;
@@ -14,6 +15,7 @@ unsigned int IPcount = 0;
 
 void addToList(string IP, dateTime * dt);
 void mainMenu();
+void selectedItemMenu(unsigned int selected);
 void convertToArray();
 void printArray(unsigned int start);
 
@@ -89,6 +91,33 @@ int main(int argc, char ** argv)
     return 0;
 }
 
+void selectedItemMenu(unsigned int selected)
+{
+    string sel;
+    while(sel != "b")
+    {
+        cout << "Selected IP: " << ipArr[selected]->IP << endl
+            << "\t" << "First: " << ipArr[selected]->first->date << " " 
+            << ipArr[selected]->first->time << endl
+            << "\t" << "Last: " << ipArr[selected]->last->date << " " 
+            << ipArr[selected]->last->time << endl
+            << endl; 
+            
+        cout << "1 - WHOIS query" << endl
+            << endl;
+            
+        cout << "b - Back to Main Menu" << endl << endl;
+        
+        cout << "Make a selection. >";
+        cin >> sel;
+        
+        if(sel == "1")
+        {
+            system(string("whois " + ipArr[selected]->IP + " | less").c_str());
+        }
+    }
+}
+
 void mainMenu()
 {
     string sel;
@@ -138,7 +167,7 @@ void mainMenu()
             selected = (page * 10) + selected;
             if (! (selected >= IPcount))
             {
-                cout << "Selected IP: " << ipArr[selected]->IP << endl; 
+                selectedItemMenu(selected);
             }
             else
             {
@@ -156,6 +185,7 @@ void printArray(unsigned int start)
             << "\t" << "First: " << ipArr[x]->first->date << " " << ipArr[x]->first->time //<< endl
             << "\t" << "Last: " << ipArr[x]->last->date << " " << ipArr[x]->last->time //<< endl
             << endl;
+
     }
 }
 
