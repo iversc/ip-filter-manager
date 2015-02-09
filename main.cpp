@@ -4,11 +4,12 @@
 #include <sstream>
 #include <locale>
 #include <stdlib.h>
+#include "CMenu.h"
 #include "ipList.h"
 
 using namespace std;
 
-ipList * list = NULL;
+ipList * mainList = NULL;
 ipList ** ipArr = NULL;
 unsigned int IPcount = 0;
 
@@ -94,6 +95,11 @@ int main(int argc, char ** argv)
 void selectedItemMenu(unsigned int selected)
 {
     string sel;
+    CMenu * menu = new CMenu;
+    menu->AddItem("1", "WHOIS query");
+    menu->AddSeparator();
+    menu->AddItem("b", "Back to Main Menu");
+    
     while(sel != "b")
     {
         cout << "Selected IP: " << ipArr[selected]->IP << endl
@@ -102,20 +108,24 @@ void selectedItemMenu(unsigned int selected)
             << "\t" << "Last: " << ipArr[selected]->last->date << " " 
             << ipArr[selected]->last->time << endl
             << endl; 
-            
+/*            
         cout << "1 - WHOIS query" << endl
             << endl;
             
         cout << "b - Back to Main Menu" << endl << endl;
         
         cout << "Make a selection. >";
-        cin >> sel;
+        cin >> sel;*/
+        
+        sel = menu->Show();
         
         if(sel == "1")
         {
             system(string("whois " + ipArr[selected]->IP + " | less").c_str());
         }
     }
+
+    delete menu;
 }
 
 void mainMenu()
@@ -126,8 +136,8 @@ void mainMenu()
     ipArr = new ipList*[IPcount];
     for(unsigned int x = 0; x < IPcount; x++)
     {
-        ipArr[x] = list;
-        list = list->next;
+        ipArr[x] = mainList;
+        mainList = mainList->next;
     }
 
     while (sel != "q" && sel != "Q")
@@ -192,7 +202,7 @@ void printArray(unsigned int start)
 void convertToArray()
 {
     ipArr = new ipList*[IPcount];
-    ipList * curList = list;
+    ipList * curList = mainList;
     for(unsigned int x = 0; x < IPcount; x++)
     {
         ipArr[x] = curList;
@@ -202,7 +212,7 @@ void convertToArray()
 
 void addToList(string IP, dateTime * dt)
 {
-    ipList * curList = list;
+    ipList * curList = mainList;
     ipList * lastItem = NULL;
 
     while(curList != NULL)
@@ -231,7 +241,7 @@ void addToList(string IP, dateTime * dt)
 
         if(lastItem==NULL)
         {
-            list = newItem;
+            mainList = newItem;
         }
         else
         {

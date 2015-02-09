@@ -1,6 +1,6 @@
 CPP=g++
-CPPFILES=main.cpp
-OBJFILES=main.o
+CPPFILES=main.cpp CMenu.cpp
+OBJFILES=main.o CMenu.o
 OUTFILE=ipmanage
 CPPFLAGS=-Wall
 
