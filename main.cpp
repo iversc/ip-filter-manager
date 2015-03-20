@@ -103,6 +103,7 @@ void selectedItemMenu(unsigned int selected)
     while(sel != "b")
     {
         cout << "Selected IP: " << ipArr[selected]->IP << endl
+            << "\t" << "Total Entries: " << ipArr[selected]->count << endl
             << "\t" << "First: " << ipArr[selected]->first->date << " " 
             << ipArr[selected]->first->time << endl
             << "\t" << "Last: " << ipArr[selected]->last->date << " " 
