@@ -12,13 +12,15 @@ using namespace std;
 ipList * mainList = NULL;
 ipList ** ipArr = NULL;
 unsigned int IPcount = 0;
-
+bool interactiveMode = false;
+bool testMode = false;
+bool verboseMode = false;
 
 void addToList(string IP, dateTime * dt);
 void mainMenu();
 void selectedItemMenu(unsigned int selected);
 void convertToArray();
-void printArray(unsigned int start);
+void printArray(unsigned int start, unsigned int end);
 
 template <typename T>
   string NumberToString ( T Number )
@@ -34,16 +36,40 @@ int main(int argc, char ** argv)
     string toShow;
     string fileName = "/var/log/iptables.log";
     
-    if(argc == 2)
+    if(argc > 1)
     {
-        string sArgV = string(argv[1]);
-        if(sArgV == "TEST" || sArgV == "test")
+        for(int paramCount = 1; paramCount < argc; paramCount++)
         {
-            fileName = "./testdata";
-        }
-        else
-        {
-            fileName = fileName + "." +sArgV;
+            string sArgV = string(argv[paramCount]);
+            if(sArgV == "-t")
+            {
+                fileName = "./testdata";
+                testMode = true;
+            }
+            /*else
+            {
+                fileName = fileName + "." +sArgV;
+            }*/
+            
+            if(sArgV == "-i")
+            {
+                interactiveMode = true;
+            }
+            
+            if(sArgV == "-p")
+            {
+                if (testMode)
+                {
+                    cout << "Error: -t and -p are mutually exclusive." << endl;
+                    exit(1);
+                }
+                fileName = fileName + ".1";
+            }
+            
+            if(sArgV == "-v")
+            {
+                verboseMode = true;
+            }
         }
     }
     
@@ -79,10 +105,18 @@ int main(int argc, char ** argv)
         }
 
         myfile.close();
-        cout << "Entries: " << lineCount << endl << endl;
+        cout << endl << lineCount << " access attempts." << endl << endl;
 
         convertToArray();
-        mainMenu();
+        if(interactiveMode)
+        {
+            mainMenu();
+        }
+        else if (verboseMode)
+        {
+            printArray(0, IPcount);
+            cout << endl;
+        }
     }
     else //if(myfile.isopen())
     {
@@ -143,7 +177,7 @@ void mainMenu()
 
     while (sel != "q" && sel != "Q")
     {
-        printArray(page * 10);
+        printArray((page * 10), (page * 10) + 10);
         cout << endl;
         if( (IPcount > 10) && ((page * 10) + 10 < IPcount) )
         {
@@ -188,9 +222,9 @@ void mainMenu()
     }
 }
 
-void printArray(unsigned int start)
+void printArray(unsigned int start, unsigned int end)
 {
-    for(unsigned int x = start; x < start + 10 && x < IPcount; x++)
+    for(unsigned int x = start; x < end && x < IPcount; x++)
     {
         cout << (x - start) << " - " << ipArr[x]->IP << ": " << ipArr[x]->count //<< endl
             << "\t" << "First: " << ipArr[x]->first->date << " " << ipArr[x]->first->time //<< endl

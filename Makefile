@@ -3,6 +3,7 @@ CPPFILES=main.cpp CMenu.cpp
 OBJFILES=main.o CMenu.o
 OUTFILE=ipmanage
 CPPFLAGS=-Wall
+INSTALLDIR=/usr/local/bin
 
 all: $(OUTFILE)
 
@@ -17,4 +18,7 @@ clean:
 	rm $(OUTFILE)
 
 install: all
-	cp $(OUTFILE) ~/getcount
+	cp $(OUTFILE) $(INSTALLDIR)/$(OUTFILE)
+
+uninstall:
+	rm $(INSTALLDIR)/$(OUTFILE)
