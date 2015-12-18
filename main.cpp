@@ -75,8 +75,8 @@ int main(int argc, char ** argv)
     
     ifstream myfile(fileName.c_str());
     int lineCount = 0;
-    unsigned int srcPos = 0;
-    unsigned int srcEnd = 0;
+    size_t srcPos = 0;
+    size_t srcEnd = 0;
     if(myfile.is_open())
     {
         while(getline(myfile, line))

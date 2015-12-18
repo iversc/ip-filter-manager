@@ -1,8 +1,8 @@
-CPP=g++
+CPP=clang++
 CPPFILES=main.cpp CMenu.cpp
 OBJFILES=main.o CMenu.o
 OUTFILE=ipmanage
-CPPFLAGS=-Wall
+CPPFLAGS=-Wall -Wextra -g
 INSTALLDIR=/usr/local/bin
 
 all: $(OUTFILE)
