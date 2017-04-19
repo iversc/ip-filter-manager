@@ -1,4 +1,4 @@
-CPP=clang++
+CXX=clang++
 CPPFILES=main.cpp CMenu.cpp
 OBJFILES=main.o CMenu.o
 OUTFILE=ipmanage
@@ -8,10 +8,10 @@ INSTALLDIR=/usr/local/bin
 all: $(OUTFILE)
 
 $(OUTFILE): $(OBJFILES)
-	$(CPP) $(CPPFLAGS) $(OBJFILES) -o $(OUTFILE)
+	$(CXX) $(CPPFLAGS) $(OBJFILES) -o $(OUTFILE)
 
 $(%.o): $(%.cpp)
-	$(CPP) $(CPPFLAGS) -c $< -o $@
+	$(CXX) $(CPPFLAGS) -c $< -o $@
 
 clean:
 	rm *.o
