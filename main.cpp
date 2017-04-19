@@ -131,6 +131,7 @@ void selectedItemMenu(unsigned int selected)
     string sel;
     CMenu * menu = new CMenu;
     menu->AddItem("1", "WHOIS query");
+    menu->AddItem("2", "AbuseAt CBL query(Firefox)");
     menu->AddSeparator();
     menu->AddItem("b", "Back to Main Menu");
     
@@ -158,6 +159,11 @@ void selectedItemMenu(unsigned int selected)
         {
             system(string("whois " + ipArr[selected]->IP + " | less").c_str());
         }
+
+	if(sel == "2")
+	{
+	    system(string("firefox http://www.abuseat.org/lookup.cgi?ip=" + ipArr[selected]->IP + " &").c_str());
+	}
     }
 
     delete menu;
