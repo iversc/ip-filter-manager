@@ -1,0 +1,181 @@
+#!/usr/bin/python3
+
+import sys
+import os
+
+ipList = {}
+
+class Menu:
+	def __init__(self):
+		self.menuList = []
+
+	def AddItem(self, key, display):
+		if len(key) != 1:
+			return 1
+		
+		self.menuList.append( (key,display) )
+		return 0
+
+	def AddSeparator(self):
+		self.menuList.append(("SEP","SEP"))
+
+	def Show(self):
+		for (key, display) in self.menuList:
+			if key == "SEP":
+				print()
+			else:
+				print("{} - {}".format(key, display))
+
+		print()
+		return input("Make a selection. >")
+
+def addToList(IP, date, time):
+	global ipList
+
+	existing = 0
+
+	if IP in ipList:
+		(count,first,last) = ipList[IP]
+		count += 1
+	else:
+		count = 1
+		first = (date, time)
+
+	last = (date, time)
+	ipList[IP] = (count,first,last)
+
+
+def printList():
+	for i,(IP,(count,first,last)) in enumerate(list(ipList.items())):
+		print("{} - {}: {}".format(i, IP, count),end='')
+		print("\tFirst: {} {}".format(first[0], first[1]),end='')
+		print("\tLast: {} {}".format(last[0], last[1]),end='')
+		print()
+
+def addListToMenu(menu, start, end):
+	for i,(IP,(count,first,last)) in enumerate(list(ipList.items())[start:end]):
+		display = "{}: {}".format(IP, count)
+		display += "\tFirst: {} {}".format(first[0], first[1])
+		display += "\tLast: {} {}".format(last[0],last[1])
+		
+		menu.AddItem(str(i), display)
+
+def mainMenu():
+	selectedOption = ""
+	page = 0
+	ipCount = len(ipList)
+
+	while selectedOption != "q":
+		theMenu = Menu()
+		addListToMenu(theMenu, page*10, (page*10)+10)
+		theMenu.AddSeparator()
+
+		if ( (ipCount > 10) and ((page * 10) + 10 < ipCount) ):
+			theMenu.AddItem("n","Next page")
+
+		if (page > 0):
+			theMenu.AddItem("p", "Previous page")
+
+		theMenu.AddItem("q", "Quit")
+
+		selectedOption = theMenu.Show() 
+		selectedOption = selectedOption.lower()
+
+		if ((selectedOption == "p") and (page > 0)):
+			page -= 1
+		elif ((selectedOption == "n") and ((page * 10) + 10 < ipCount) ):
+			page += 1
+		elif (selectedOption == "q"):
+			break
+		else:
+			selectedNum = int(selectedOption)
+			selectedNum = (page * 10) + selectedNum
+
+			if not (selectedNum >= ipCount):
+				selectedIP = list(ipList.keys())[selectedNum]
+				selectedItemMenu(selectedIP)
+			else:
+				cout << "Invalid selection."
+
+
+def selectedItemMenu(IP):
+	selectedOption = ""
+	theMenu = Menu()
+
+	theMenu.AddItem("1", "WHOIS Query")
+	theMenu.AddItem("2", "AbuseAt CBL Query(Firefox)")
+	theMenu.AddSeparator()
+	theMenu.AddItem("b", "Back to Main Menu")
+
+	while selectedOption != "b":
+		(count,(firstDate,firstTime),(lastDate,lastTime)) = ipList[IP]
+		print("Selected IP: {}".format(IP))
+		print("\tTotal Entries: {}:".format(count))
+		print("\tFirst: {} {}".format(firstDate, firstTime))
+		print("\tLast: {} {}".format(lastDate, lastTime))
+		print()
+
+		selectedOption = theMenu.Show()
+		selectedOption = selectedOption.lower()
+
+		if(selectedOption == "1"):
+			os.system("whois {} | less".format(IP))
+		elif(selectedOption == "2"):
+			os.system("firefox http://www.abuseat.org/lookup.cgi?ip={} &".format(IP))
+		else:
+			print("Invalid selection.")
+			print()
+		
+
+def main():
+	fileName = "/var/log/iptables.log"
+	testMode = False
+	interactiveMode = False
+	verboseMode = False
+
+	if(len(sys.argv) > 1):
+		for arg in sys.argv:
+			if arg == "-t":
+				fileName = "./testdata"
+				testMode = True;
+
+			interactiveMode = True if arg == "-i" else (False)
+
+			if arg == "-p":
+				if testMode:
+					print("Error: -t and -p are mutually exclusive.")
+					sys.exit(1)
+				
+				fileName = fileName + ".1"
+
+			verboseMode = True if arg == "-v" else (False)
+
+	lineCount = 0
+
+	f = open(fileName, "rU")
+	for line in f:
+		srcPos = line.find("SRC=")
+		if srcPos != -1:
+			srcEnd = line.find(' ', srcPos)
+			
+			toShow = line[srcPos + 4 : srcEnd]
+			date = line[:6]
+			time = line[7:15]
+			addToList(toShow, date, time)
+
+			lineCount += 1
+
+	f.close()
+
+	print("\n{} access attempts.\n".format(lineCount))
+
+	if interactiveMode:
+		mainMenu()
+	elif verboseMode:
+		printList()
+		print()
+
+	return
+
+if __name__ == "__main__":
+	main()
