@@ -1,20 +1,24 @@
-CPP=g++
-CPPFILES=main.cpp
-OBJFILES=main.o
+CXX=clang++
+CPPFILES=main.cpp CMenu.cpp
+OBJFILES=main.o CMenu.o
 OUTFILE=ipmanage
-CPPFLAGS=-Wall
+CPPFLAGS=-Wall -Wextra -g
+INSTALLDIR=/usr/local/bin
 
 all: $(OUTFILE)
 
 $(OUTFILE): $(OBJFILES)
-	$(CPP) $(CPPFLAGS) $(OBJFILES) -o $(OUTFILE)
+	$(CXX) $(CPPFLAGS) $(OBJFILES) -o $(OUTFILE)
 
 $(%.o): $(%.cpp)
-	$(CPP) $(CPPFLAGS) -c $< -o $@
+	$(CXX) $(CPPFLAGS) -c $< -o $@
 
 clean:
 	rm *.o
 	rm $(OUTFILE)
 
 install: all
-	cp $(OUTFILE) ~/getcount
+	cp $(OUTFILE) $(INSTALLDIR)/$(OUTFILE)
+
+uninstall:
+	rm $(INSTALLDIR)/$(OUTFILE)
