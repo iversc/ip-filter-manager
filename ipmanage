@@ -88,14 +88,19 @@ def mainMenu():
 		elif (selectedOption == "q"):
 			break
 		else:
-			selectedNum = int(selectedOption)
+			try:
+				selectedNum = int(selectedOption)
+			except:
+				print("Invalid selection.")
+				continue
+
 			selectedNum = (page * 10) + selectedNum
 
 			if not (selectedNum >= ipCount):
 				selectedIP = list(ipList.keys())[selectedNum]
 				selectedItemMenu(selectedIP)
 			else:
-				cout << "Invalid selection."
+				print("Invalid selection.")
 
 
 def selectedItemMenu(IP):
