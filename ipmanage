@@ -27,7 +27,7 @@ class Menu:
 				print("{} - {}".format(key, display))
 
 		print()
-		return input("Make a selection. >")
+		return input("Make a selection. >").lower()
 
 def addToList(IP, date, time):
 	global ipList
@@ -79,7 +79,6 @@ def mainMenu():
 		theMenu.AddItem("q", "Quit")
 
 		selectedOption = theMenu.Show() 
-		selectedOption = selectedOption.lower()
 
 		if ((selectedOption == "p") and (page > 0)):
 			page -= 1
@@ -121,7 +120,6 @@ def selectedItemMenu(IP):
 		print()
 
 		selectedOption = theMenu.Show()
-		selectedOption = selectedOption.lower()
 
 		if(selectedOption == "1"):
 			os.system("whois {} | less".format(IP))
