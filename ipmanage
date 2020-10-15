@@ -155,20 +155,18 @@ def main():
 
 	lineCount = 0
 
-	f = open(fileName, "rU")
-	for line in f:
-		srcPos = line.find("SRC=")
-		if srcPos != -1:
-			srcEnd = line.find(' ', srcPos)
+	with open(fileName, "r") as f:
+		for line in f:
+			srcPos = line.find("SRC=")
+			if srcPos != -1:
+				srcEnd = line.find(' ', srcPos)
 			
-			toShow = line[srcPos + 4 : srcEnd]
-			date = line[:6]
-			time = line[7:15]
-			addToList(toShow, date, time)
+				toShow = line[srcPos + 4 : srcEnd]
+				date = line[:6]
+				time = line[7:15]
+				addToList(toShow, date, time)
 
-			lineCount += 1
-
-	f.close()
+				lineCount += 1
 
 	print("\n{} access attempts.\n".format(lineCount))
 
